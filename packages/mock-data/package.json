@@ -1,0 +1,19 @@
+{
+  "name": "@javits/mock-data",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic seed data for the prototype: venue, buildings, floors, destinations, events, exhibitors, venue graph, floorplan assets.",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@javits/domain": "*"
+  }
+}
