@@ -1,0 +1,1 @@
+gh repo create cowork-test-repo --public --add-readme --gitignore Python --license MIT --clone

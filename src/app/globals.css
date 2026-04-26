@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/*  Javits Brand Guidelines v1.0 · 2026 — CSS tokens                   */
+/*  Change brand values here and they propagate throughout the app.   */
+/* ------------------------------------------------------------------ */
+:root {
+  /* Brand palette */
+  --javits-gold: #ffcc00;
+  --javits-green: #54b147;
+  --javits-blue: #05b8eb;
+  --javits-black: #000000;
+  --javits-white: #ffffff;
+
+  /* Semantic surface tokens — default light mode */
+  --bg: var(--javits-white);
+  --bg-subtle: #fafafa;
+  --fg: #0a0a0a;
+  --fg-muted: #555555;
+  --line: #e6e6e6;
+
+  /* Type — swap to Titling Gothic FB when licensed */
+  --font-display: "Bebas Neue", Impact, "Helvetica Neue Condensed", sans-serif;
+  --font-body: "Inter", Helvetica, Arial, system-ui, sans-serif;
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Safe-area insets for mobile bottom nav */
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--javits-black);
+    --bg-subtle: #0a0a0a;
+    --fg: var(--javits-white);
+    --fg-muted: #b3b3b3;
+    --line: #1f1f1f;
+  }
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utility: brand headline style — tall condensed uppercase with +25 tracking */
+.headline {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 0.95;
+}
+
+/* Disable iOS tap highlight — feels sharper on touch */
+* {
+  -webkit-tap-highlight-color: transparent;
+}

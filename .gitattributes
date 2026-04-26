@@ -1,0 +1,15 @@
+* text=auto eol=lf
+
+# Treat as binary so diffs don't try to inline them
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.pdf binary
+*.zip binary
+*.mp4 binary
+*.mov binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
