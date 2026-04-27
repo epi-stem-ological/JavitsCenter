@@ -203,7 +203,7 @@ function OrganizerSnapshot() {
   return (
     <Card>
       <CardBody>
-        <div className="headline text-xl">Today's Snapshot</div>
+        <div className="headline text-xl">Today&apos;s Snapshot</div>
         <div className="grid grid-cols-3 gap-2 mt-3 text-center">
           <StatBlock label="Bookings" value="42" />
           <StatBlock label="Leads" value="128" />
@@ -254,7 +254,7 @@ function TenantServicesRow() {
           Dining, mail, maintenance, and amenities tailored to tenants.
         </p>
         <Link href="/map" className="mt-3 inline-block text-xs headline tracking-headline text-javits-blue">
-          See what's nearby →
+          See what&apos;s nearby →
         </Link>
       </CardBody>
     </Card>
