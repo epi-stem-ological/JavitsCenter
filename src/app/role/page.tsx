@@ -80,7 +80,7 @@ export default function RolePage() {
       </header>
 
       <section className="px-5">
-        <h1 className="headline text-4xl leading-none">Who's using the app?</h1>
+        <h1 className="headline text-4xl leading-none">Who&apos;s using the app?</h1>
         <p className="text-sm text-fg-muted mt-2 max-w-sm">
           The home screen adapts to you. You can switch roles anytime from Profile.
         </p>
