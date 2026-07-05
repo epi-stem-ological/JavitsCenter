@@ -51,11 +51,13 @@ export default async function ShortLanding({ params }: { params: { id: string } 
 }
 
 function friendlyLocation(buildingId: string, floorId: string): string {
-  const b = buildingId.includes('north') ? 'North Building' : buildingId.includes('south') ? 'South Building' : '';
-  const l = floorId.split('_').pop()?.toUpperCase() ?? '';
-  return [b, l].filter(Boolean).join(' · ');
+  const level = floorId.split('_').pop() ?? '';
+  const levelLabel = level.startsWith('l') ? `Level ${level.slice(1)}` : level.toUpperCase();
+  const wing = buildingId.includes('north') ? 'Javits North' : 'Main Building';
+  return [wing, levelLabel].filter(Boolean).join(' · ');
 }
 
 function floorLevel(floorId: string): string {
-  return floorId.split('_').pop()?.toUpperCase() ?? '';
+  const level = floorId.split('_').pop() ?? '';
+  return level.startsWith('l') ? level.slice(1) : level.toUpperCase();
 }

@@ -46,7 +46,7 @@ export function HomeScreen({ navigation }: Props) {
         </View>
 
         <Pressable onPress={() => navigation.navigate('Search')} accessibilityRole="search">
-          <SearchField value="" onChangeText={() => {}} placeholder="Search halls, booths, food…" />
+          <SearchField value="" onChangeText={() => {}} placeholder="Search booths, rooms, services, food…" />
         </Pressable>
 
         <View>
@@ -59,9 +59,9 @@ export function HomeScreen({ navigation }: Props) {
             <CategoryChip category="restroom" label="WC" icon="man" onPress={() => navigation.navigate('Search', { initialQuery: 'restroom' })} />
             <CategoryChip category="help_desk" label="Help" icon="information-circle" onPress={() => navigation.navigate('Search', { initialQuery: 'help' })} />
             <CategoryChip category="registration" label="Register" icon="barcode" onPress={() => navigation.navigate('Search', { initialQuery: 'registration' })} />
-            <CategoryChip category="exit" label="Exit" icon="exit" onPress={() => navigation.navigate('Search', { initialQuery: 'exit' })} />
+            <CategoryChip category="exit" label="Transit" icon="car" onPress={() => navigation.navigate('Search', { initialQuery: 'transportation' })} />
             <CategoryChip category="elevator" label="Elevators" icon="arrow-up" onPress={() => navigation.navigate('Search', { initialQuery: 'elevator' })} />
-            <CategoryChip category="parking" label="Parking" icon="car" onPress={() => navigation.navigate('Search', { initialQuery: 'parking' })} />
+            <CategoryChip category="info" label="Access" icon="accessibility" onPress={() => navigation.navigate('Search', { initialQuery: 'accessibility' })} />
           </View>
         </View>
 
@@ -104,13 +104,14 @@ export function HomeScreen({ navigation }: Props) {
 }
 
 function formatPositionLabel(buildingId: string, floorId: string): string {
-  const bldg = buildingId.includes('north') ? 'North Building' : buildingId.includes('south') ? 'South Building' : 'Venue';
-  const level = floorId.split('_').pop()?.toUpperCase() ?? '';
-  return `${bldg} · ${level}`;
+  const bldg = buildingId.includes('north') ? 'Javits North' : 'Main Building';
+  const level = floorId.split('_').pop() ?? '';
+  const levelLabel = level.startsWith('l') ? `Level ${level.slice(1)}` : level.toUpperCase();
+  return `${bldg} · ${levelLabel}`;
 }
 
 function formatShortFloor(floorId: string): string {
-  const bldg = floorId.includes('north') ? 'N' : floorId.includes('south') ? 'S' : '';
   const level = floorId.split('_').pop()?.toUpperCase() ?? '';
-  return `${level} · ${bldg}`;
+  const wing = floorId.includes('north') ? ' · N' : '';
+  return `${level}${wing}`;
 }

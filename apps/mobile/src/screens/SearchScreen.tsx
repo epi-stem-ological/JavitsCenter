@@ -58,7 +58,7 @@ export function SearchScreen({ navigation, route }: Props) {
       {empty ? (
         <View style={{ marginTop: t.space(6), gap: t.space(2) }}>
           <Text variant="heading">Try searching for…</Text>
-          <Text variant="body" tone="secondary">"hall a", "booth 4512", "food", "help"</Text>
+          <Text variant="body" tone="secondary">"hall 3a", "booth 1845", "registration", "food", "room 409"</Text>
         </View>
       ) : results.length === 0 ? (
         <View style={{ marginTop: t.space(6), gap: t.space(2) }}>

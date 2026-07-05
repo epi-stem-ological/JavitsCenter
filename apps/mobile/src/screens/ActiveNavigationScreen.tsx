@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, useWindowDimensions, Pressable } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import type { Destination, Floor, RouteStep, FloorChange } from '@javits/domain';
+import { formatDistance, type Destination, type Floor, type RouteStep, type FloorChange } from '@javits/domain';
 import { Screen } from '../components/Screen';
 import { Text } from '../components/Text';
 import { Button } from '../components/Button';
@@ -17,6 +17,11 @@ import type { MockLocationProvider } from '@javits/providers/mock/MockLocationPr
 import type { RootStackParamList } from '../navigation/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ActiveNavigation'>;
+
+function friendlyLevel(floorId: string): string {
+  const level = floorId.split('_').pop() ?? '';
+  return level.startsWith('l') ? `Level ${level.slice(1)}` : 'the next floor';
+}
 
 export function ActiveNavigationScreen({ route, navigation }: Props) {
   const t = useTheme();
@@ -141,8 +146,8 @@ export function ActiveNavigationScreen({ route, navigation }: Props) {
           <Card>
             <Text variant="heading">
               {pendingFloorChange.method === 'bridge'
-                ? 'Cross the bridge to the next building'
-                : `Take the ${pendingFloorChange.method} to ${pendingFloorChange.toFloorId.split('_').pop()?.toUpperCase()}`}
+                ? 'Take the corridor to Javits North'
+                : `Take the ${pendingFloorChange.method} to ${friendlyLevel(pendingFloorChange.toFloorId)}`}
             </Text>
             <Text variant="body" tone="secondary" style={{ marginTop: t.space(1) }}>
               {pendingFloorChange.isAccessible ? 'Step-free · ' : ''}
@@ -160,7 +165,7 @@ export function ActiveNavigationScreen({ route, navigation }: Props) {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flex: 1 }}>
               <Text variant="bodyLarge">
-                {Math.max(1, Math.round(session.remainingDurationSec / 60))} min · {session.remainingDistanceMeters} m remaining
+                {Math.max(1, Math.round(session.remainingDurationSec / 60))} min · {formatDistance(session.remainingDistanceMeters)} remaining
               </Text>
               {nextStep ? (
                 <Text variant="body" tone="secondary" numberOfLines={1}>

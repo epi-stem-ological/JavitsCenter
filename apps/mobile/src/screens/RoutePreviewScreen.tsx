@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, ScrollView, useWindowDimensions } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import type { Destination, Floor, Route } from '@javits/domain';
+import { formatDistance, type Destination, type Floor, type Route } from '@javits/domain';
 import { Screen } from '../components/Screen';
 import { Text } from '../components/Text';
 import { Button } from '../components/Button';
@@ -92,7 +92,7 @@ export function RoutePreviewScreen({ route, navigation }: Props) {
         </View>
 
         <View style={{ flexDirection: 'row', gap: t.space(2) }}>
-          <Stat label="Distance" value={`${plannedRoute.totalDistanceMeters} m`} />
+          <Stat label="Distance" value={formatDistance(plannedRoute.totalDistanceMeters)} />
           <Stat label="Time" value={`~${Math.max(1, Math.round(plannedRoute.estimatedDurationSec / 60))} min`} />
           <Stat label="Floors" value={plannedRoute.hasFloorChange ? `${floorsInvolved(plannedRoute)}` : '1'} />
         </View>
@@ -118,7 +118,7 @@ export function RoutePreviewScreen({ route, navigation }: Props) {
                   <Text variant="bodyLarge" numberOfLines={2}>{s.instruction}</Text>
                   {s.distanceMeters > 0 ? (
                     <Text variant="body" tone="secondary">
-                      {Math.round(s.distanceMeters)} m · ~{Math.max(1, Math.round(s.durationSec / 60))} min
+                      {formatDistance(s.distanceMeters)} · ~{Math.max(1, Math.round(s.durationSec / 60))} min
                     </Text>
                   ) : null}
                 </View>

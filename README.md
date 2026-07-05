@@ -26,9 +26,10 @@ apps/
   mobile/      Expo React Native prototype (hero screens)
   web/         Next.js app (browse, search, QR/deep-link landing)
 packages/
-  domain/      TypeScript types: Venue, Destination, Route, etc.
-  providers/   Adapter interfaces + mock implementations
-  mock-data/   Seed venue, destinations, events, exhibitors, graph
+  domain/         TypeScript types: Venue, Destination, Route, etc.
+  design-system/  Canonical tokens + web React components (Claude Design sync target)
+  providers/      Adapter interfaces + mock implementations
+  mock-data/      Javits-flavored SAMPLE seed data (destinations, events, graph)
 docs/          Product + engineering docs
 ```
 
@@ -73,7 +74,7 @@ deterministic seed data.
 | Route planning            | MOCKED  | A* over seed venue graph                                   |
 | Floor plans               | MOCKED  | Simple SVG placeholders                                    |
 | Search                    | MOCKED  | In-memory token/trigram scoring                            |
-| Exhibitors / events       | MOCKED  | Small seed set                                             |
+| Exhibitors / events       | MOCKED  | Small Javits-flavored sample set (NRF 2027 etc. are NOT live schedules) |
 | Analytics                 | MOCKED  | Console logger implements the production event contract    |
 
 See [`docs/06-mock-vs-production.md`](docs/06-mock-vs-production.md) for the

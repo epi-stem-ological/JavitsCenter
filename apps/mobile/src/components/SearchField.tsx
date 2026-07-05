@@ -7,7 +7,7 @@ export function SearchField({
   value,
   onChangeText,
   onSubmit,
-  placeholder = 'Search halls, booths, food…',
+  placeholder = 'Search booths, rooms, services, food…',
   autoFocus,
 }: {
   value: string;

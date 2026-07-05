@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import type { RouteStep } from '@javits/domain';
+import { formatDistance, type RouteStep } from '@javits/domain';
 import { useTheme } from '../design/ThemeProvider';
 import { Text } from './Text';
 import { iconForManeuver } from './iconForCategory';
@@ -35,7 +35,7 @@ export function NavBanner({ step, distanceToNext }: { step: RouteStep; distanceT
       </View>
       <View style={{ flex: 1 }}>
         <Text variant="navStep" style={{ color: t.color.bg.base }}>
-          {distanceToNext > 0 ? `In ${distanceToNext} m` : 'Now'}
+          {distanceToNext > 2 ? `In ${formatDistance(distanceToNext)}` : 'Now'}
         </Text>
         <Text variant="bodyLarge" style={{ color: t.color.bg.base }} numberOfLines={2}>
           {step.instruction}

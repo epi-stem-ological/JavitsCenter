@@ -1,13 +1,15 @@
 import type { Venue } from '@javits/domain';
 
 /**
- * Seed venue: one venue, two buildings, three floors in the North Building
- * and two in the South Building. Coordinates are in meters in a local frame
- * centered roughly on the middle of each floor.
+ * Seed venue: Jacob K. Javits Convention Center — SAMPLE DATA.
  *
- * This data is shaped to be compatible with what a real Cisco venue export
- * would provide, but has not been validated against any real export. Do not
- * ship to production.
+ * Floor/hall names are inspired by the real venue (Crystal Palace, Hall 3A/3B,
+ * River Pavilion, Room 409) so demos read believably, but geometry, layout,
+ * and the Javits North wing here are simplified fictions. Coordinates are
+ * meters in a local frame per floor. Do not treat as a real venue survey.
+ *
+ * Production replaces this with the venue export from the indoor-mapping
+ * onboarding pipeline (see docs/05-adapter-integration.md).
  */
 export const seedVenues: Venue[] = [
   {
@@ -15,19 +17,66 @@ export const seedVenues: Venue[] = [
     slug: 'javits-center',
     name: 'Javits Center',
     address: {
-      line1: '655 W 34th St',
+      line1: '429 11th Ave',
       city: 'New York',
       region: 'NY',
       postalCode: '10001',
       countryCode: 'US',
     },
     timezone: 'America/New_York',
-    defaultBuildingId: 'bldg_north',
+    defaultBuildingId: 'bldg_main',
     buildings: [
+      {
+        id: 'bldg_main',
+        venueId: 'venue_javits',
+        name: 'Main Building',
+        shortCode: 'M',
+        defaultFloorId: 'floor_main_l1',
+        floors: [
+          {
+            id: 'floor_main_l1',
+            buildingId: 'bldg_main',
+            level: 1,
+            name: 'L1',
+            displayName: 'Level 1 — Crystal Palace & Registration',
+            bounds: { min: { x: -120, y: -80 }, max: { x: 120, y: 80 } },
+            zones: [
+              { id: 'zone_crystal_palace', floorId: 'floor_main_l1', name: 'Crystal Palace Lobby', type: 'lobby' },
+              { id: 'zone_l1_registration', floorId: 'floor_main_l1', name: 'Registration', type: 'concourse' },
+              { id: 'zone_l1_transport', floorId: 'floor_main_l1', name: 'Ground Transportation', type: 'concourse' },
+            ],
+          },
+          {
+            id: 'floor_main_l3',
+            buildingId: 'bldg_main',
+            level: 3,
+            name: 'L3',
+            displayName: 'Level 3 — Exhibition Halls',
+            bounds: { min: { x: -120, y: -80 }, max: { x: 120, y: 80 } },
+            zones: [
+              { id: 'zone_hall_3a', floorId: 'floor_main_l3', name: 'Hall 3A', type: 'hall' },
+              { id: 'zone_hall_3b', floorId: 'floor_main_l3', name: 'Hall 3B', type: 'hall' },
+              { id: 'zone_l3_services', floorId: 'floor_main_l3', name: 'Exhibitor Services', type: 'service' },
+            ],
+          },
+          {
+            id: 'floor_main_l4',
+            buildingId: 'bldg_main',
+            level: 4,
+            name: 'L4',
+            displayName: 'Level 4 — River Pavilion & Meeting Rooms',
+            bounds: { min: { x: -120, y: -80 }, max: { x: 120, y: 80 } },
+            zones: [
+              { id: 'zone_river_pavilion', floorId: 'floor_main_l4', name: 'River Pavilion', type: 'hall' },
+              { id: 'zone_l4_meetings', floorId: 'floor_main_l4', name: 'Meeting Rooms 401–415', type: 'meeting_area' },
+            ],
+          },
+        ],
+      },
       {
         id: 'bldg_north',
         venueId: 'venue_javits',
-        name: 'North Building',
+        name: 'Javits North',
         shortCode: 'N',
         defaultFloorId: 'floor_north_l1',
         floors: [
@@ -36,67 +85,10 @@ export const seedVenues: Venue[] = [
             buildingId: 'bldg_north',
             level: 1,
             name: 'L1',
-            displayName: 'Level 1 — Halls & Registration',
+            displayName: 'Level 1 — Operations (Staff)',
             bounds: { min: { x: -120, y: -80 }, max: { x: 120, y: 80 } },
             zones: [
-              { id: 'zone_hall_a', floorId: 'floor_north_l1', name: 'Hall A', type: 'hall' },
-              { id: 'zone_hall_b', floorId: 'floor_north_l1', name: 'Hall B', type: 'hall' },
-              { id: 'zone_n_lobby', floorId: 'floor_north_l1', name: 'North Lobby', type: 'lobby' },
-            ],
-          },
-          {
-            id: 'floor_north_l2',
-            buildingId: 'bldg_north',
-            level: 2,
-            name: 'L2',
-            displayName: 'Level 2 — Food & Lounges',
-            bounds: { min: { x: -120, y: -80 }, max: { x: 120, y: 80 } },
-            zones: [
-              { id: 'zone_l2_food', floorId: 'floor_north_l2', name: 'Food Court', type: 'concourse' },
-              { id: 'zone_l2_lounge', floorId: 'floor_north_l2', name: 'Exhibitor Lounge', type: 'meeting_area' },
-            ],
-          },
-          {
-            id: 'floor_north_l4',
-            buildingId: 'bldg_north',
-            level: 4,
-            name: 'L4',
-            displayName: 'Level 4 — Meeting Rooms',
-            bounds: { min: { x: -120, y: -80 }, max: { x: 120, y: 80 } },
-            zones: [
-              { id: 'zone_l4_meetings', floorId: 'floor_north_l4', name: 'Meeting Rooms 401–420', type: 'meeting_area' },
-            ],
-          },
-        ],
-      },
-      {
-        id: 'bldg_south',
-        venueId: 'venue_javits',
-        name: 'South Building',
-        shortCode: 'S',
-        defaultFloorId: 'floor_south_l1',
-        floors: [
-          {
-            id: 'floor_south_l1',
-            buildingId: 'bldg_south',
-            level: 1,
-            name: 'L1',
-            displayName: 'Level 1 — South Hall',
-            bounds: { min: { x: -120, y: -80 }, max: { x: 120, y: 80 } },
-            zones: [
-              { id: 'zone_hall_s', floorId: 'floor_south_l1', name: 'South Hall', type: 'hall' },
-              { id: 'zone_s_lobby', floorId: 'floor_south_l1', name: 'South Lobby', type: 'lobby' },
-            ],
-          },
-          {
-            id: 'floor_south_l2',
-            buildingId: 'bldg_south',
-            level: 2,
-            name: 'L2',
-            displayName: 'Level 2 — Press & Services',
-            bounds: { min: { x: -120, y: -80 }, max: { x: 120, y: 80 } },
-            zones: [
-              { id: 'zone_l2_press', floorId: 'floor_south_l2', name: 'Press Center', type: 'service' },
+              { id: 'zone_n_ops', floorId: 'floor_north_l1', name: 'Operations & Freight', type: 'service' },
             ],
           },
         ],

@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/domain" },
+    { "path": "./packages/design-system" },
     { "path": "./packages/providers" },
     { "path": "./packages/mock-data" },
     { "path": "./apps/mobile" },

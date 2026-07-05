@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import type { Destination } from '@javits/domain';
+import { formatDistance, type Destination } from '@javits/domain';
 import { useTheme } from '../design/ThemeProvider';
 import { Text } from './Text';
 import { categoryColorKey, categoryLabel } from '../design/categoryColor';
@@ -53,7 +53,7 @@ export function DestinationRow({
         </Text>
         <Text variant="body" tone="secondary" numberOfLines={1}>
           {[categoryLabel(destination.category), floorLabel].filter(Boolean).join(' · ')}
-          {typeof distanceMeters === 'number' ? ` · ${distanceMeters} m` : ''}
+          {typeof distanceMeters === 'number' ? ` · ${formatDistance(distanceMeters)}` : ''}
           {typeof etaSec === 'number' ? ` · ${Math.max(1, Math.round(etaSec / 60))} min` : ''}
         </Text>
       </View>
@@ -63,11 +63,11 @@ export function DestinationRow({
 }
 
 function formatFloor(floorId: string): string {
-  // Seed floorIds look like `floor_north_l1`. Human label: "North · L1".
+  // Seed floorIds look like `floor_main_l3`. Human label: "Level 3".
   const parts = floorId.split('_');
-  const level = parts[parts.length - 1];
+  const level = parts[parts.length - 1] ?? '';
   const bldg = parts[1];
-  const b = bldg ? bldg.charAt(0).toUpperCase() + bldg.slice(1) : '';
-  const l = level ? level.toUpperCase() : '';
-  return [b, l].filter(Boolean).join(' · ');
+  const levelLabel = level.startsWith('l') ? `Level ${level.slice(1)}` : level.toUpperCase();
+  const wing = bldg === 'north' ? 'Javits North' : '';
+  return [levelLabel, wing].filter(Boolean).join(' · ');
 }

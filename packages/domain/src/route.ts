@@ -47,7 +47,7 @@ export interface RouteStep {
 export interface RouteOptions {
   /** Prefer step-free path (elevators over stairs/escalators). */
   accessible?: boolean;
-  /** Units for instruction formatting; UI may also display both. */
+  /** Units for instruction formatting; defaults to imperial (US venue). */
   units?: 'metric' | 'imperial';
   /** Average walking speed (m/s) for ETA; prototype default 1.2. */
   walkingSpeedMps?: number;

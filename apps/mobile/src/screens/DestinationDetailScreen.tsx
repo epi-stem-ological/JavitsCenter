@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import type { Destination } from '@javits/domain';
+import { formatDistance, type Destination } from '@javits/domain';
 import { Screen } from '../components/Screen';
 import { Text } from '../components/Text';
 import { Button } from '../components/Button';
@@ -74,7 +74,7 @@ export function DestinationDetailScreen({ route, navigation }: Props) {
             <View style={{ flexDirection: 'row', gap: t.space(3) }}>
               <Ionicons name="walk" size={24} color={t.color.fg.secondary} />
               <View style={{ flex: 1 }}>
-                <Text variant="bodyLarge">{distance} m · ~{etaMin} min walk</Text>
+                <Text variant="bodyLarge">{formatDistance(distance)} · ~{etaMin} min walk</Text>
                 <Text variant="body" tone="secondary">From your current position</Text>
               </View>
             </View>
@@ -108,7 +108,8 @@ export function DestinationDetailScreen({ route, navigation }: Props) {
 }
 
 function friendlyFloor(floorId: string): string {
-  const b = floorId.includes('north') ? 'North' : floorId.includes('south') ? 'South' : '';
-  const l = floorId.split('_').pop()?.toUpperCase() ?? '';
-  return [b, l].filter(Boolean).join(' · ');
+  const level = floorId.split('_').pop() ?? '';
+  const levelLabel = level.startsWith('l') ? `Level ${level.slice(1)}` : level.toUpperCase();
+  const wing = floorId.includes('north') ? 'Javits North' : '';
+  return [levelLabel, wing].filter(Boolean).join(' · ');
 }

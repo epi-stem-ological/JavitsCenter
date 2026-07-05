@@ -1,6 +1,8 @@
+import { formatDistance } from '@javits/domain';
 import type {
   Destination,
   FloorChange,
+  Units,
   GraphEdge,
   GraphNode,
   Id,
@@ -46,6 +48,7 @@ export class MockRoutingProvider implements RoutingProvider {
 
     const accessible = request.options?.accessible ?? false;
     const speed = request.options?.walkingSpeedMps ?? 1.2;
+    const units = request.options?.units ?? 'imperial';
 
     const startNode = nearestNode(this.graph, request.origin);
     const endNode = nodeForDestination(this.graph, dest.id) ?? nearestNode(this.graph, dest.position);
@@ -53,10 +56,10 @@ export class MockRoutingProvider implements RoutingProvider {
     const path = aStar(this.graph, startNode.id, endNode.id, accessible);
     if (!path) {
       // Fallback to a single-step "direct" route so prototype never fails.
-      return directFallbackRoute(request.origin, dest, speed);
+      return directFallbackRoute(request.origin, dest, speed, units);
     }
 
-    const steps = buildSteps(path, this.graph, dest, speed);
+    const steps = buildSteps(path, this.graph, dest, speed, units);
     const totalDistance = steps.reduce((a, s) => a + s.distanceMeters, 0);
     const totalDuration = steps.reduce((a, s) => a + s.durationSec, 0);
 
@@ -310,7 +313,13 @@ function aStar(graph: VenueGraph, startId: Id, goalId: Id, accessible: boolean):
   return null;
 }
 
-function buildSteps(path: GraphNode[], _graph: VenueGraph, destination: Destination, speed: number): RouteStep[] {
+function buildSteps(
+  path: GraphNode[],
+  _graph: VenueGraph,
+  destination: Destination,
+  speed: number,
+  units: Units
+): RouteStep[] {
   const steps: RouteStep[] = [];
   if (path.length < 2) {
     steps.push({
@@ -369,7 +378,7 @@ function buildSteps(path: GraphNode[], _graph: VenueGraph, destination: Destinat
     const dist = Math.hypot(b.position.x - a.position.x, b.position.y - a.position.y);
     const prev = path[i - 1];
     const maneuver = i === 0 ? 'depart' : computeManeuver(prev?.position, a.position, b.position);
-    const instruction = instructionFor(maneuver, Math.round(dist), b.landmark);
+    const instruction = instructionFor(maneuver, dist, units, b.landmark);
 
     steps.push({
       id: makeId('step'),
@@ -431,13 +440,14 @@ function computeManeuver(
   return 'straight';
 }
 
-function instructionFor(m: Maneuver, dist: number, landmark?: string): string {
+function instructionFor(m: Maneuver, distMeters: number, units: Units, landmark?: string): string {
   const tail = landmark ? ` at ${landmark}` : '';
+  const dist = formatDistance(distMeters, units);
   switch (m) {
     case 'depart':
-      return `Head out for ${dist} m${tail}`;
+      return `Head out for ${dist}${tail}`;
     case 'straight':
-      return `Continue straight ${dist} m${tail}`;
+      return `Continue straight ${dist}${tail}`;
     case 'slight_left':
       return `Bear left${tail}`;
     case 'turn_left':
@@ -455,7 +465,7 @@ function instructionFor(m: Maneuver, dist: number, landmark?: string): string {
     case 'arrive':
       return `You've arrived`;
     default:
-      return `Continue ${dist} m`;
+      return `Continue ${dist}`;
   }
 }
 
@@ -469,18 +479,19 @@ function transitionInstruction(change: FloorChange): string {
       : change.method === 'escalator'
         ? 'escalator'
         : 'stairs';
-  const floorLabel = change.toFloorId.split('_').pop() ?? 'the next floor';
-  return `Take the ${m} to ${floorLabel.toUpperCase()}`;
+  const level = change.toFloorId.split('_').pop() ?? '';
+  const floorLabel = level.startsWith('l') ? `Level ${level.slice(1)}` : 'the next floor';
+  return `Take the ${m} to ${floorLabel}`;
 }
 
-function directFallbackRoute(origin: VenuePosition, dest: Destination, speed: number): Route {
+function directFallbackRoute(origin: VenuePosition, dest: Destination, speed: number, units: Units): Route {
   const dx = dest.position.x - origin.x;
   const dy = dest.position.y - origin.y;
   const dist = Math.hypot(dx, dy);
   const step: RouteStep = {
     id: makeId('step'),
     index: 0,
-    instruction: `Head directly to ${dest.name}`,
+    instruction: `Head ${formatDistance(dist, units)} to ${dest.name}`,
     maneuver: 'straight',
     distanceMeters: dist,
     durationSec: dist / speed,

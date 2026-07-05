@@ -46,7 +46,8 @@ function groupByCategory(list: Destination[]): Map<DestinationCategory, Destinat
 }
 
 function friendlyLocation(buildingId: string, floorId: string): string {
-  const b = buildingId.includes('north') ? 'North' : buildingId.includes('south') ? 'South' : '';
-  const l = floorId.split('_').pop()?.toUpperCase() ?? '';
-  return [b, l].filter(Boolean).join(' · ');
+  const level = floorId.split('_').pop() ?? '';
+  const levelLabel = level.startsWith('l') ? `Level ${level.slice(1)}` : level.toUpperCase();
+  const wing = buildingId.includes('north') ? 'Javits North' : '';
+  return [levelLabel, wing].filter(Boolean).join(' · ');
 }

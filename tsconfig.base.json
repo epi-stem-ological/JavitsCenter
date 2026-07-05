@@ -23,6 +23,9 @@
     "paths": {
       "@javits/domain": ["packages/domain/src"],
       "@javits/domain/*": ["packages/domain/src/*"],
+      "@javits/design-system": ["packages/design-system/src"],
+      "@javits/design-system/tokens": ["packages/design-system/src/tokens"],
+      "@javits/design-system/*": ["packages/design-system/src/*"],
       "@javits/providers": ["packages/providers/src"],
       "@javits/providers/*": ["packages/providers/src/*"],
       "@javits/mock-data": ["packages/mock-data/src"],

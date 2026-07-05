@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@javits/domain": "*",
+    "@javits/design-system": "*",
     "@javits/providers": "*",
     "@javits/mock-data": "*",
     "@expo/vector-icons": "^14.0.0",
