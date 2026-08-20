@@ -1,0 +1,12 @@
+# YouTube → Agent pipeline
+#
+#   pip install -r requirements.txt
+#
+# Note: `pipx install yt-dlp` / `uv tool install yt-dlp` are NOT sufficient —
+# those install only the CLI, and extractor.py imports yt_dlp as a library.
+
+streamlit>=1.40.0
+yt-dlp>=2025.1.15
+youtube-transcript-api>=1.0.0
+google-genai>=1.0.0
+pydantic>=2.0.0
