@@ -48,7 +48,7 @@ Handle the exit code before going further:
 | Code | Meaning | What to do |
 |---|---|---|
 | 0 | Transcript captured | Continue to Step 2 |
-| 2 | Video reachable, no captions | Tell the user captions are off. Offer: they paste a transcript, or install `yt-dlp` (`pipx install yt-dlp`) which also unlocks age/region-gated videos. Do not guess at content. |
+| 2 | Video reachable, no captions | Tell the user captions are off. Offer: they paste a transcript, or install `yt-dlp`, which also unlocks age/region-gated videos (`uv tool install yt-dlp`, `pipx install yt-dlp`, or `brew install yt-dlp` — whichever the machine has; the script finds it on PATH automatically). Do not guess at content. |
 | 3 | YouTube unreachable | Network egress is blocked here. Say so plainly, name the sandbox as the cause, and offer to run the analysis on a transcript they paste in. |
 | 4 | Not a YouTube URL | Ask for the real link. |
 
