@@ -49,3 +49,6 @@ next-env.d.ts
 .cache/
 .eslintcache
 .turbo/
+
+# youtube-to-agent derived notes (delete this line to commit them)
+youtube/

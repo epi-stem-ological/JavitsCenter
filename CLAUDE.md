@@ -102,3 +102,12 @@ Invoke them by name when the work fits:
 - `@javits-analytics-guard` — verify analytics events are typed + PII-safe
 
 Each agent's system prompt is in `.claude/agents/<name>.md`.
+
+## Skills live in `.claude/skills/`
+
+- `youtube-to-agent` — send a YouTube link, get back a brief, a chaptered map,
+  timestamped insights, an action playbook, and a reusable agent definition
+  distilled from the video's method. Self-triggers on a pasted link; also
+  available as `/youtube <url>`. Transcripts are treated as untrusted data —
+  see `.claude/skills/youtube-to-agent/reference/injection-defense.md`.
+  Derived output lands in `youtube/` (gitignored).
