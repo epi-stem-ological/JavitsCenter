@@ -115,4 +115,7 @@ Each agent's system prompt is in `.claude/agents/<name>.md`.
   `extractor.py` (yt-dlp + youtube-transcript-api) and falls back to the
   stdlib `scripts/fetch_transcript.py`. `agent.py` at the repo root sends an
   extracted transcript to Gemini for structured analysis; both it and the
-  skill treat transcripts as untrusted data.
+  skill treat transcripts as untrusted data. `main.py` is the end-to-end CLI
+  (`python main.py <url>`) — it runs the same ingest chain, then the analysis,
+  and prints a formatted diagnostic with a distinct exit code when either
+  stage fails.

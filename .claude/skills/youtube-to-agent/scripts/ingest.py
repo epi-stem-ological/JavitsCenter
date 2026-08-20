@@ -88,6 +88,25 @@ NEVER_FABRICATE = (
 )
 
 
+MAX_DETAIL_CHARS = 300
+
+
+def _condense(detail: str) -> str:
+    """Keep diagnostics scannable.
+
+    yt-dlp appends its "please report this issue" boilerplate to every error,
+    which buries the actual cause. Trim it and anything else overlong.
+    """
+    text = " ".join((detail or "").split())
+    for boilerplate in ("; please report this issue", " Confirm you are on the latest version"):
+        index = text.find(boilerplate)
+        if index != -1:
+            text = text[:index]
+    if len(text) > MAX_DETAIL_CHARS:
+        text = text[:MAX_DETAIL_CHARS].rstrip() + " […]"
+    return text
+
+
 @dataclass
 class Attempt:
     """One ingest path's outcome."""
@@ -112,6 +131,8 @@ class Ingest:
     method: str = ""
     title: str = ""
     channel: str = ""
+    description: str = ""
+    transcript_text: str = ""
     segment_count: int = 0
     word_count: int = 0
 
@@ -376,8 +397,16 @@ def _write_outputs(result: Ingest, fetcher, payload, out_root: str, window: int)
     result.method = payload.source_method
     result.title = payload.title
     result.channel = payload.channel
+    result.description = payload.description
     result.segment_count = len(payload.segments)
     result.word_count = sum(len(s["text"].split()) for s in payload.segments)
+
+    # Build the text handed to the analysis stage from the same blocks the
+    # markdown uses, so a timestamp the model cites can be found in the file.
+    result.transcript_text = "\n".join(
+        f"[{fetcher.timestamp(block['start'])}] {block['text'].strip()}"
+        for block in fetcher.to_blocks(payload.segments, window)
+    )
 
 
 def render_failure(result: Ingest) -> str:
@@ -400,7 +429,7 @@ def render_failure(result: Ingest) -> str:
             f"  {attempt.name} — {attempt.tool}",
             f"    status: {attempt.status}",
             f"    reason: {attempt.classification or 'n/a'}",
-            f"    detail: {attempt.detail or 'n/a'}",
+            f"    detail: {_condense(attempt.detail) or 'n/a'}",
             "",
         ]
     lines += ["What this means:", "", "  " + GUIDANCE[label].replace("\n", "\n  "), ""]
@@ -425,6 +454,35 @@ def render_success(result: Ingest) -> str:
     return "\n".join(lines)
 
 
+def run_ingest(
+    url: str,
+    out_dir: str = "youtube",
+    lang: str = "en",
+    window: int = 30,
+    force_fallback: bool = False,
+) -> Ingest:
+    """Run the ingest pipeline: extractor.py first, stdlib fetcher as fallback.
+
+    Always returns an Ingest — check `.ok`, and render_failure() it if not.
+    """
+    fetcher = _load_module("_yta_fetcher", os.path.join(SCRIPT_DIR, "fetch_transcript.py"))
+    result = Ingest(url=url)
+
+    got = False
+    if not force_fallback:
+        got = try_extractor(url, result, fetcher, out_dir, window)
+    if not got:
+        try_fetcher(url, result, fetcher, out_dir, window, lang)
+    return result
+
+
+def exit_code_for(result: Ingest) -> int:
+    """Process exit code matching an ingest outcome."""
+    if result.ok:
+        return 0
+    return EXIT_CODES.get(combine(result.attempts), 6)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("url", help="YouTube URL or 11-character video id")
@@ -435,14 +493,7 @@ def main() -> int:
     parser.add_argument("--force-fallback", action="store_true", help="skip path 1 (for testing)")
     args = parser.parse_args()
 
-    fetcher = _load_module("_yta_fetcher", os.path.join(SCRIPT_DIR, "fetch_transcript.py"))
-    result = Ingest(url=args.url)
-
-    got = False
-    if not args.force_fallback:
-        got = try_extractor(args.url, result, fetcher, args.out_dir, args.window)
-    if not got:
-        got = try_fetcher(args.url, result, fetcher, args.out_dir, args.window, args.lang)
+    result = run_ingest(args.url, args.out_dir, args.lang, args.window, args.force_fallback)
 
     if args.json:
         from dataclasses import asdict
@@ -455,9 +506,7 @@ def main() -> int:
     else:
         print(render_failure(result), file=sys.stderr)
 
-    if result.ok:
-        return 0
-    return EXIT_CODES.get(combine(result.attempts), 6)
+    return exit_code_for(result)
 
 
 if __name__ == "__main__":
