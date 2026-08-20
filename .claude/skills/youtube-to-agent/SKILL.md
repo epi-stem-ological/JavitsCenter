@@ -37,23 +37,42 @@ Hold these rules for the whole run:
 ## Step 1 — Ingest
 
 ```bash
-python3 .claude/skills/youtube-to-agent/scripts/fetch_transcript.py "<url>" --out-dir youtube
+python3 .claude/skills/youtube-to-agent/scripts/ingest.py "<url>" --out-dir youtube
 ```
 
-Stdlib only, no install needed. Writes `youtube/<slug>/transcript.md` (timestamped,
-each block linking back to the exact second) and `youtube/<slug>/source.json`.
+One entry point, two paths, tried in order. You do not choose between them —
+`ingest.py` does:
+
+1. **`extractor.py`** (yt-dlp + youtube-transcript-api) — preferred when both
+   libraries are importable and the file is on disk. Better metadata, better
+   handling of gated videos.
+2. **`fetch_transcript.py`** (stdlib only) — used when the libraries are
+   missing, `extractor.py` is absent, or path 1 fails for any reason.
+
+Either path writes the same `youtube/<slug>/transcript.md` (timestamped, each
+block linking back to the exact second) and `youtube/<slug>/source.json`, so
+nothing downstream needs to know which one ran. On success the report names the
+path used, and says so when it fell back.
 
 Handle the exit code before going further:
 
 | Code | Meaning | What to do |
 |---|---|---|
 | 0 | Transcript captured | Continue to Step 2 |
-| 2 | Video reachable, no captions | Tell the user captions are off. Offer: they paste a transcript, or install `yt-dlp`, which also unlocks age/region-gated videos (`uv tool install yt-dlp`, `pipx install yt-dlp`, or `brew install yt-dlp` — whichever the machine has; the script finds it on PATH automatically). Do not guess at content. |
-| 3 | YouTube unreachable | Network egress is blocked here. Say so plainly, name the sandbox as the cause, and offer to run the analysis on a transcript they paste in. |
+| 2 | No usable transcript — captions are off | Offer: the user pastes a transcript, or picks another video. Installing yt-dlp does not conjure captions that were never generated. |
+| 3 | YouTube unreachable — network egress blocked | Say so plainly, name the sandbox as the cause, and offer to analyze a transcript they paste in. |
 | 4 | Not a YouTube URL | Ask for the real link. |
+| 5 | Video private, removed, age- or region-blocked | Ask the user to confirm the link or supply a transcript. |
+| 6 | Libraries missing, or an unclassified failure | Relay the diagnostic verbatim — it names what each path tried. |
+
+On any non-zero exit the script prints a diagnostic to stderr naming both paths,
+what each attempted, and how the failure was classified. **Read it and relay the
+real reason.** Do not paraphrase it into a vague "I couldn't get the video."
 
 Never fabricate a summary of a video you could not fetch. An honest "I could not
-reach it" beats a plausible invention every time.
+reach it" beats a plausible invention every time — and the diagnostic ends with
+an explicit instruction not to write one, because that is the failure mode with
+the worst consequences and the least visible symptoms.
 
 ## Step 2 — Classify before you write
 

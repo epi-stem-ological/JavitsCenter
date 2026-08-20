@@ -111,3 +111,8 @@ Each agent's system prompt is in `.claude/agents/<name>.md`.
   available as `/youtube <url>`. Transcripts are treated as untrusted data —
   see `.claude/skills/youtube-to-agent/reference/injection-defense.md`.
   Derived output lands in `youtube/` (gitignored).
+  Ingest goes through `scripts/ingest.py`, which prefers the repo-root
+  `extractor.py` (yt-dlp + youtube-transcript-api) and falls back to the
+  stdlib `scripts/fetch_transcript.py`. `agent.py` at the repo root sends an
+  extracted transcript to Gemini for structured analysis; both it and the
+  skill treat transcripts as untrusted data.
